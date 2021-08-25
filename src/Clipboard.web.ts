@@ -1,7 +1,12 @@
+interface ClipboardItem {
+  new (input: { [contentType: string]: any }): ClipboardItem;
+}
+
 declare var navigator: {
   clipboard: {
     readText(): Promise<string>;
     writeText(data: string): Promise<void>;
+    write(data:Array<ClipboardItem>):Promise<void>;
   };
 };
 
@@ -32,6 +37,20 @@ export const Clipboard = {
       el.select();
       document.execCommand('copy');
       document.body.removeChild(el);
+    }
+  },
+
+  setImage(content:Array){
+    if (navigator && navigator.clipboard) {
+        console.log('web copy clipboard call');
+        // navigator.clipboard.write([
+        //     new ClipboardItem({
+        //         ["image/png"]: blob
+        //     })
+        // ]).then(() => {
+        //     console.log('Copied')
+        // })
+      //navigator.clipboard.writeText(content);
     }
   },
 };
