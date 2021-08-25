@@ -1,12 +1,12 @@
-interface ClipboardItem {
-  new (input: { [contentType: string]: any }): ClipboardItem;
+declare var ClipboardItem : {  
+  new (input: { [contentType: string]: any }): any;
 }
 
 declare var navigator: {
   clipboard: {
     readText(): Promise<string>;
     writeText(data: string): Promise<void>;
-    write(data:Array<ClipboardItem>):Promise<void>;
+    write(data:Array<any>):Promise<void>;
   };
 };
 
@@ -50,7 +50,7 @@ export const Clipboard = {
           .then( blob => new Promise( callback =>{
               let reader = new FileReader() ;
               reader.onload = function(){
-                  var base64Data = this.result;
+                  var base64Data = this.result as string;
                   base64Data = base64Data.replace("image/jpeg","image/png");
                   (async() => {
                       const base64Response = await fetch(base64Data);
