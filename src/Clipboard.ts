@@ -53,6 +53,27 @@ export const Clipboard = {
   setString(content: string) {
     NativeClipboard.setString(content);
   },
+
+  setImage(imageUrl: string) {
+    fetch(imageUrl)
+      .then((response) => {
+          if (!response.ok) { throw Error(response.statusText); }
+          return response.blob();
+      })
+      .then( blob => new Promise( callback =>{
+          let reader = new FileReader() ;
+          reader.onload = function(){
+              var base64Data = this.result as string;
+              base64Data = base64Data.replace("image/jpeg","image/png");
+              NativeClipboard.setImage(base64Data);
+          };
+          reader.readAsDataURL(blob);
+      }))       
+      .catch(() => {
+          // const errorDesc = this.props.translate('textInputFocusable.problemGettingImageYouPasted');
+          // Growl.error(errorDesc);
+      });
+  },
   /**
    * Returns whether the clipboard has content or is empty.
    * This method returns a `Promise`, so you can use following code to get clipboard content

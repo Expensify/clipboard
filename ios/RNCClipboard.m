@@ -66,6 +66,15 @@ RCT_EXPORT_METHOD(setString:(NSString *)content)
   clipboard.string = (content ? : @"");
 }
 
+RCT_EXPORT_METHOD(setImage:(NSString *)base64Image)
+{
+  NSData *imageData = [NSData dataFromBase64String:frontCheckBytesString];
+  UIImage* copyImage = [UIImage imageWithData:imageData];
+
+  UIPasteboard *clipboard = [UIPasteboard generalPasteboard]
+  clipboard.image = copyImage;
+}
+
 RCT_EXPORT_METHOD(getString:(RCTPromiseResolveBlock)resolve
                   reject:(__unused RCTPromiseRejectBlock)reject)
 {
