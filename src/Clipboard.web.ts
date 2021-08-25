@@ -40,17 +40,36 @@ export const Clipboard = {
     }
   },
 
-  setImage(content:any){
+  setImage(imageUrl:string){
     if (navigator && navigator.clipboard) {
-        console.log('web copy clipboard call');
-        // navigator.clipboard.write([
-        //     new ClipboardItem({
-        //         ["image/png"]: blob
-        //     })
-        // ]).then(() => {
-        //     console.log('Copied')
-        // })
-      //navigator.clipboard.writeText(content);
+        fetch(imageUrl)
+          .then((response) => {
+              if (!response.ok) { throw Error(response.statusText); }
+              return response.blob();
+          })
+          .then( blob => new Promise( callback =>{
+              let reader = new FileReader() ;
+              reader.onload = function(){
+                  var base64Data = this.result;
+                  base64Data = base64Data.replace("image/jpeg","image/png");
+                  (async() => {
+                      const base64Response = await fetch(base64Data);
+                      const blob = await base64Response.blob()
+                      navigator.clipboard.write([
+                          new ClipboardItem({
+                              ["image/png"]: blob
+                          })
+                      ]).then(() => {
+                          console.log('Copied')
+                      })
+                  })();
+              };
+              reader.readAsDataURL(blob);
+          }))       
+          .catch(() => {
+              // const errorDesc = this.props.translate('textInputFocusable.problemGettingImageYouPasted');
+              // Growl.error(errorDesc);
+          });
     }
   },
 };
