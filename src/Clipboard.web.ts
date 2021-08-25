@@ -40,7 +40,7 @@ export const Clipboard = {
     }
   },
 
-  setImage(content:Array){
+  setImage(content:any){
     if (navigator && navigator.clipboard) {
         console.log('web copy clipboard call');
         // navigator.clipboard.write([
