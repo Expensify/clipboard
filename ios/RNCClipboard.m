@@ -68,11 +68,14 @@ RCT_EXPORT_METHOD(setString:(NSString *)content)
 
 RCT_EXPORT_METHOD(setImage:(NSString *)base64Image)
 {
-  NSData *imageData = [NSData dataFromBase64String:frontCheckBytesString];
+  NSString *pngPrefix = @"data:image/png;base64,";
+  NSString *base64 = [base64Image stringByReplacingOccurrencesOfString:pngPrefix withString:@""];
+    
+  NSData *imageData = [NSData dataFromBase64String:base64];
   UIImage* copyImage = [UIImage imageWithData:imageData];
 
-  UIPasteboard *clipboard = [UIPasteboard generalPasteboard]
-  clipboard.image = copyImage;
+  UIPasteboard *clipboard = [UIPasteboard generalPasteboard];
+  [clipboard setImage:copyImage];
 }
 
 RCT_EXPORT_METHOD(getString:(RCTPromiseResolveBlock)resolve
