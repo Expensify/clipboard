@@ -102,6 +102,34 @@ public class ClipboardModule extends ContextBaseJavaModule {
   }
 
   @ReactMethod
+  public void setImage(String base64) {
+    String replaceBase64 = base64.replace("data:application/octet-stream;base64,","");
+    byte[] decodedString = Base64.decode(replaceBase64, Base64.DEFAULT);
+    // Bitmap Image
+    Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+    String filename = "ex_clip.png";
+    File file= Environment.getExternalStorageDirectory();
+    File dest = new File(file, filename);
+    try {
+      FileOutputStream out = new FileOutputStream(dest);
+      bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+      out.flush();
+      out.close();
+
+      ClipboardManager clipboard = getClipboardService();
+      ContentValues values = new ContentValues(2);
+      values.put(MediaStore.Images.Media.MIME_TYPE,"image/png");
+      values.put(MediaStore.Images.Media.DATA,dest.getAbsolutePath());
+      ContentResolver theContent = getContext().getContentResolver();
+      Uri imageUri = theContent.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+      ClipData clipdata = ClipData.newUri(theContent, dest.getName(), imageUri);
+      clipboard.setPrimaryClip(clipdata);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  @ReactMethod
   void removeListener() {
     if(listener != null){
       try{
