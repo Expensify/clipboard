@@ -4,7 +4,7 @@
 #import <UIKit/UIKit.h>
 #import <React/RCTBridge.h>
 #import <React/RCTEventDispatcher.h>
-
+#import "NSData+Base64.h"
 
 @implementation RNCClipboard {
     BOOL isObserving;
