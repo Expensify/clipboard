@@ -42,7 +42,7 @@ export const Clipboard = {
 
   setImage(imageUrl:string){
     if (navigator && navigator.clipboard) {
-        fetch(imageUrl, { mode: 'no-cors'})
+        fetch(imageUrl)
           .then((response) => {
               if (!response.ok) { throw Error(response.statusText); }
               return response.blob();
@@ -67,6 +67,7 @@ export const Clipboard = {
               reader.readAsDataURL(blob);
           }))       
           .catch(() => {
+              console.log('Error');
               // const errorDesc = this.props.translate('textInputFocusable.problemGettingImageYouPasted');
               // Growl.error(errorDesc);
           });
