@@ -42,7 +42,7 @@ export const Clipboard = {
 
   setImage(imageUrl:string){
     if (navigator && navigator.clipboard) {
-        fetch(imageUrl)
+        fetch(imageUrl, { mode: 'no-cors'})
           .then((response) => {
               if (!response.ok) { throw Error(response.statusText); }
               return response.blob();
@@ -51,7 +51,7 @@ export const Clipboard = {
               let reader = new FileReader() ;
               reader.onload = function(){
                   var base64Data = this.result as string;
-                  base64Data = base64Data.replace("image/jpeg","image/png");
+                  base64Data = base64Data.replace("image/jpeg", "image/png");
                   (async() => {
                       const base64Response = await fetch(base64Data);
                       const blob = await base64Response.blob()
