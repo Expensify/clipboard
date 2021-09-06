@@ -53,26 +53,21 @@ export const Clipboard = {
   setString(content: string) {
     NativeClipboard.setString(content);
   },
-
-  setImage(imageUrl: string) {
-    fetch(imageUrl)
-      .then((response) => {
-          if (!response.ok) { throw Error(response.statusText); }
-          return response.blob();
-      })
-      .then( blob => new Promise( callback =>{
-          let reader = new FileReader() ;
-          reader.onload = function(){
-              var base64Data = this.result as string;
-              base64Data = base64Data.replace("image/jpeg","image/png");
-              NativeClipboard.setImage(base64Data);
-          };
-          reader.readAsDataURL(blob);
-      }))       
-      .catch(() => {
-          // const errorDesc = this.props.translate('textInputFocusable.problemGettingImageYouPasted');
-          // Growl.error(errorDesc);
-      });
+  /** 
+   * Copy Image to clipboard   
+   * @param imageUrl url string of image to copy clipboard.
+   */
+  async setImage(imageURL: string): Promise<void> {
+      const response: Response = await fetch(imageURL);
+      if (!response.ok) { throw Error(response.statusText); }
+      const blob: Blob = await response.blob();
+      const reader = new FileReader();
+      reader.onload = async () => {
+        let base64Data = reader.result as string;
+        base64Data = base64Data.replace("image/jpeg", "image/png");
+        NativeClipboard.setImage(base64Data);
+      }
+      await reader.readAsDataURL(blob);
   },
   /**
    * Returns whether the clipboard has content or is empty.

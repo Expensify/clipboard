@@ -6,7 +6,7 @@ declare var navigator: {
   clipboard: {
     readText(): Promise<string>;
     writeText(data: string): Promise<void>;
-    write(data:Array<any>):Promise<void>;
+    write(data:Array<any>): Promise<void>;
   };
 };
 
@@ -39,38 +39,24 @@ export const Clipboard = {
       document.body.removeChild(el);
     }
   },
-
-  setImage(imageUrl:string){
-    if (navigator && navigator.clipboard) {
-        fetch(imageUrl)
-          .then((response) => {
-              if (!response.ok) { throw Error(response.statusText); }
-              return response.blob();
-          })
-          .then( blob => new Promise( callback =>{
-              let reader = new FileReader() ;
-              reader.onload = function(){
-                  var base64Data = this.result as string;
-                  base64Data = base64Data.replace("image/jpeg", "image/png");
-                  (async() => {
-                      const base64Response = await fetch(base64Data);
-                      const blob = await base64Response.blob()
-                      navigator.clipboard.write([
-                          new ClipboardItem({
-                              ["image/png"]: blob
-                          })
-                      ]).then(() => {
-                          console.log('Copied')
-                      })
-                  })();
-              };
-              reader.readAsDataURL(blob);
-          }))       
-          .catch(() => {
-              console.log('Error');
-              // const errorDesc = this.props.translate('textInputFocusable.problemGettingImageYouPasted');
-              // Growl.error(errorDesc);
-          });
-    }
+  /** 
+   * Copy Image to clipboard   
+   * @param imageUrl url string of image to copy clipboard.
+  */
+  async setImage(imageURL: string): Promise<void> {
+      if (navigator && navigator.clipboard) {
+        const response: Response = await fetch(imageURL);
+        if (!response.ok) { throw Error(response.statusText); }
+	      const blob: Blob = await response.blob();
+	      const reader = new FileReader();
+        reader.onload = async () => {
+          let base64Data = reader.result as string;
+          base64Data = base64Data.replace("image/jpeg", "image/png");
+          const base64Response: Response = await fetch(base64Data);
+          const innerBlob: Blob = await base64Response.blob();
+          await navigator.clipboard.write([new ClipboardItem({"image/png": innerBlob})]);
+        }
+        await reader.readAsDataURL(blob);
+      }
   },
 };
